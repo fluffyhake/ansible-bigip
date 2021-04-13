@@ -1,0 +1,10 @@
+[servers]
+ubuntu2a
+ubuntu2b
+
+[bigips]
+bigip2a
+bigip2b
+
+[controller]
+jump2
