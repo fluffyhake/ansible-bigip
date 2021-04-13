@@ -1,0 +1,11 @@
+---
+- name: Play 1 list the bigip hosts in the inventory file
+  hosts: bigips
+  gather_facts: false
+  tasks:
+  - name: Task 1 - print hostname (repeat for each host)
+    debug:
+      msg: "{{ inventory_hostname }} - Host is in {{ tier }} tier"
+
+  - name: Task 2 - ping every host
+    ping:

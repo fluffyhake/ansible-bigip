@@ -1,0 +1,55 @@
+---
+- name: Create BIG-IP App
+  hosts: bigips
+  gather_facts: false
+  connection: local
+  vars:
+    provider:
+      server: "{{ inventory_hostname }}"
+      user: "{{ admin_user }}"
+      password: "{{ admin_password }}"
+      validate_certs: false
+
+  tasks:
+  - block:
+    - name: Create Monitor
+      bigip_monitor_http:
+        name: app.mon
+        send: GET /
+        receive: If you see this
+        provider: "{{ provider }}"
+  #    debug:
+  #      msg: "{{ inventory_hostname }} - Host"
+  
+    - name: Create Pool
+      bigip_pool:
+        name: app.pool
+        monitors: app.mon
+        provider: "{{ provider }}"
+  
+    - name: Add pool member
+      bigip_pool_member:
+        pool: app.pool
+        host: "{{ item }}"
+        port: 80
+        provider: "{{ provider }}"
+      with_items:
+      - 10.10.2.1
+      - 10.10.2.2
+      - 10.10.2.3
+  
+    - name: Create Virtual Server
+      bigip_virtual_server:
+        name: app.vs
+        destination: 10.10.2.101
+        port: "443"
+        pool: app.pool
+        profiles:
+        - http
+        - name: clientssl
+          context: client-side
+        snat: automap
+        provider: "{{ provider }}"
+        
+    when: inventory_hostname == "bigip2a"
+

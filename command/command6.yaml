@@ -1,0 +1,13 @@
+---
+- name: Play 1 - get date from all hosts
+  hosts: all
+  gather_facts: false
+  tasks:
+  - name: Task 1 - get date from each host
+    command: date +%u
+    register: results
+  - name: Task 2 - print date for each host
+    debug:
+      msg: It is a weekday on {{ inventory_hostname }}
+    when: results.stdout | int > 6
+
