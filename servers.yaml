@@ -1,0 +1,6 @@
+---
+ansible_ssh_user: student
+ansible_ssh_pass: student
+#ansible_become: true
+ansible_become_method: su
+ansible_su_pass: student
